@@ -1,0 +1,197 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model address {
+  address_id   Int       @id @default(autoincrement())
+  user_id      Int?
+  province     String?   @db.VarChar(255)
+  district     String?   @db.VarChar(255)
+  commune      String?   @db.VarChar(255)
+  street       String?   @db.VarChar(255)
+  housing_type String?   @db.VarChar(50)
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+  updated_at   DateTime? @default(now()) @db.Timestamp(0)
+  users        users?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "address_ibfk_1")
+  orders       orders[]
+
+  @@index([user_id], map: "user_id")
+}
+
+model categories {
+  category_id   Int        @id @default(autoincrement())
+  category_name String     @db.VarChar(255)
+  created_at    DateTime?  @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?  @default(now()) @db.Timestamp(0)
+  products      products[]
+}
+
+model order_details {
+  order_detail_id  Int              @id @default(autoincrement())
+  order_id         Int?
+  store_product_id Int?
+  quantity         Int?
+  price_order      Decimal?         @db.Decimal(10, 2)
+  created_at       DateTime?        @default(now()) @db.Timestamp(0)
+  updated_at       DateTime?        @default(now()) @db.Timestamp(0)
+  orders           orders?          @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "order_details_ibfk_1")
+  stores_products  stores_products? @relation(fields: [store_product_id], references: [store_product_id], onDelete: NoAction, onUpdate: NoAction, map: "order_details_ibfk_2")
+
+  @@index([order_id], map: "order_id")
+  @@index([store_product_id], map: "store_product_id")
+}
+
+model order_vouchers {
+  order_voucher_id Int       @id @default(autoincrement())
+  order_id         Int?
+  voucher_id       Int?
+  discount_amount  Decimal?  @db.Decimal(10, 2)
+  created_at       DateTime? @default(now()) @db.Timestamp(0)
+  updated_at       DateTime? @default(now()) @db.Timestamp(0)
+  orders           orders?   @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "order_vouchers_ibfk_1")
+  vouchers         vouchers? @relation(fields: [voucher_id], references: [voucher_id], onDelete: NoAction, onUpdate: NoAction, map: "order_vouchers_ibfk_2")
+
+  @@index([order_id], map: "order_id")
+  @@index([voucher_id], map: "voucher_id")
+}
+
+model orders {
+  order_id            Int                  @id @default(autoincrement())
+  user_id             Int?
+  order_date          DateTime?            @default(now()) @db.Timestamp(0)
+  total_price         Decimal?             @db.Decimal(10, 2)
+  shipping_address_id Int?
+  shipping_fee        Decimal              @db.Decimal(10, 2)
+  order_status        orders_order_status? @default(PENDING)
+  created_at          DateTime?            @default(now()) @db.Timestamp(0)
+  updated_at          DateTime?            @default(now()) @db.Timestamp(0)
+  order_details       order_details[]
+  order_vouchers      order_vouchers[]
+  users               users?               @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "orders_ibfk_1")
+  address             address?             @relation(fields: [shipping_address_id], references: [address_id], onDelete: NoAction, onUpdate: NoAction, map: "orders_ibfk_2")
+  payments            payments[]
+
+  @@index([shipping_address_id], map: "shipping_address_id")
+  @@index([user_id], map: "user_id")
+}
+
+model payments {
+  payment_id     Int                      @id @default(autoincrement())
+  order_id       Int?
+  payment_method payments_payment_method  @default(CASH)
+  payment_date   DateTime?                @default(now()) @db.Timestamp(0)
+  payment_amount Decimal?                 @db.Decimal(10, 2)
+  payment_status payments_payment_status? @default(PENDING)
+  created_at     DateTime?                @default(now()) @db.Timestamp(0)
+  updated_at     DateTime?                @default(now()) @db.Timestamp(0)
+  orders         orders?                  @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "payments_ibfk_1")
+
+  @@index([order_id], map: "order_id")
+}
+
+model products {
+  product_id          Int               @id @default(autoincrement())
+  product_name        String            @db.VarChar(255)
+  description         String?           @db.VarChar(255)
+  price               Decimal           @db.Decimal(10, 2)
+  discount_percentage Decimal           @db.Decimal(5, 2)
+  image_url           String?           @db.VarChar(255)
+  color               String?           @db.VarChar(50)
+  size                String?           @db.VarChar(50)
+  quantity_in_stock   Int?
+  category_id         Int?
+  created_at          DateTime?         @default(now()) @db.Timestamp(0)
+  updated_at          DateTime?         @default(now()) @db.Timestamp(0)
+  categories          categories?       @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction, map: "products_ibfk_1")
+  stores_products     stores_products[]
+
+  @@index([category_id], map: "category_id")
+}
+
+model stores {
+  store_id        Int               @id @default(autoincrement())
+  store_name      String            @db.VarChar(100)
+  store_location  String            @db.VarChar(255)
+  created_at      DateTime?         @default(now()) @db.Timestamp(0)
+  updated_at      DateTime?         @default(now()) @db.Timestamp(0)
+  stores_products stores_products[]
+}
+
+model stores_products {
+  store_product_id  Int             @id @default(autoincrement())
+  store_id          Int?
+  product_id        Int?
+  price_in_store    Decimal?        @db.Decimal(10, 2)
+  quantity_in_store Int?
+  created_at        DateTime?       @default(now()) @db.Timestamp(0)
+  updated_at        DateTime?       @default(now()) @db.Timestamp(0)
+  order_details     order_details[]
+  stores            stores?         @relation(fields: [store_id], references: [store_id], onDelete: NoAction, onUpdate: NoAction, map: "stores_products_ibfk_1")
+  products          products?       @relation(fields: [product_id], references: [product_id], onDelete: NoAction, onUpdate: NoAction, map: "stores_products_ibfk_2")
+
+  @@index([product_id], map: "product_id")
+  @@index([store_id], map: "store_id")
+}
+
+model user_vouchers {
+  user_voucher_id Int       @id @default(autoincrement())
+  user_id         Int?
+  voucher_id      Int?
+  used_date       DateTime? @db.Timestamp(0)
+  created_at      DateTime? @default(now()) @db.Timestamp(0)
+  updated_at      DateTime? @default(now()) @db.Timestamp(0)
+  users           users?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "user_vouchers_ibfk_1")
+  vouchers        vouchers? @relation(fields: [voucher_id], references: [voucher_id], onDelete: NoAction, onUpdate: NoAction, map: "user_vouchers_ibfk_2")
+
+  @@index([user_id], map: "user_id")
+  @@index([voucher_id], map: "voucher_id")
+}
+
+model users {
+  user_id       Int             @id @default(autoincrement())
+  user_name     String          @db.VarChar(255)
+  email         String          @db.VarChar(255)
+  phone         String?         @db.VarChar(20)
+  password      String          @db.VarChar(255)
+  created_at    DateTime?       @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?       @default(now()) @db.Timestamp(0)
+  address       address[]
+  orders        orders[]
+  user_vouchers user_vouchers[]
+}
+
+model vouchers {
+  voucher_id          Int              @id @default(autoincrement())
+  voucher_code        String?          @db.VarChar(50)
+  discount_percentage Decimal?         @db.Decimal(5, 2)
+  expiry_date         DateTime?        @db.Date
+  created_at          DateTime?        @default(now()) @db.Timestamp(0)
+  updated_at          DateTime?        @default(now()) @db.Timestamp(0)
+  order_vouchers      order_vouchers[]
+  user_vouchers       user_vouchers[]
+}
+
+enum payments_payment_method {
+  CASH
+  CREDIT_CARD @map("CREDIT CARD")
+  ONLINE
+}
+
+enum payments_payment_status {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum orders_order_status {
+  PENDING
+  PROCESSING
+  SHIPPING
+  DELIVERED
+  CANCELLED
+}

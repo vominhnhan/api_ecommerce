@@ -1,0 +1,31 @@
+{
+  "name": "api_ecommerce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vominhnhan/api_ecommerce.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/vominhnhan/api_ecommerce/issues"
+  },
+  "homepage": "https://github.com/vominhnhan/api_ecommerce#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.7.0",
+    "express": "^5.1.0",
+    "nodemailer": "^7.0.3",
+    "prisma": "^6.7.0"
+  }
+}
