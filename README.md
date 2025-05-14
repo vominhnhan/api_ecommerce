@@ -257,6 +257,31 @@ GROUP BY
     c.user_id;
 ```
 
+# Cách cài đặt và chạy local:
+## 1. Clone project
+```
+git clone https://github.com/vominhnhan/api_ecommerce.git
+cd api_ecommerce
+```
+## 2. Cài đặt dependencies
+```
+npm install
+```
+## 3. Chỉnh sửa file .env
+```
+DATABASE_URL="mysql://your_user:your_password@localhost:your_port_sql/ecommerce_db"
+PORT=your_port
+```
+## 4. Cài đặt database:
+```
+npx prisma migrate dev --name init
+npx prisma generate
+```
+## 3. Chạy dự án
+```
+npm run start
+```
+
 # API Endpoints
 ### 1. **Lấy danh sách tất cả các danh mục sản phẩm đã có**
    - **URL**: `http://localhost:3069/api/categories`
