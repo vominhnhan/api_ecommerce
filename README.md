@@ -292,7 +292,7 @@ npm run start
 ### 2. **Lấy danh sách sản phẩm thuộc một danh mục cụ thể**
    - **URL**: `http://localhost:3069/api/products?category_id={category_id}`
    - **Method**: `GET`
-   - Request query:
+   - **Request query**:
      - `category_id`: Mã danh mục sản phẩm
    - **Response**:\
 ![image](https://github.com/user-attachments/assets/d4ac7e77-2684-4b09-a42a-be5540cfb15a)
@@ -300,7 +300,7 @@ npm run start
 ### 3. **Tìm kiếm sản phẩm với nhiều bộ lọc và từ khóa tìm kiếm**
    - **URL**: `http://localhost:3069/api/products/search?query={query}&category_id={category_id}&min_price={min_price}&max_price={max_price}&size={size}&color={color}`
    - **Method**: `GET`
-   - Request query:
+   - **Request query**:
      - `query`: Từ khóa tìm kiếm (e.g., "giày", "áo")
      - `category_id`: Mã danh mục sản phẩm (tùy chọn)
      - `min_price`: Giá tối thiểu (tùy chọn)
@@ -313,7 +313,7 @@ npm run start
 ### 4. **Tạo đơn hàng mới và xử lý thanh toán**
    - **URL**: `http://localhost:3069/api/orders`
    - **Method**: `POST`
-   - Request body:
+   - **Request body**:
      - `user_id`: ID người dùng
      - `items`: Danh sách sản phẩm trong đơn hàng. Mỗi sản phẩm bao gồm:
          - `product_id`: Mã sản phẩm
