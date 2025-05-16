@@ -277,7 +277,7 @@ PORT=your_port
 npx prisma migrate dev --name init
 npx prisma generate
 ```
-## 3. Chạy dự án
+## 5. Chạy dự án
 ```
 npm run start
 ```
